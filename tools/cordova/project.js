@@ -310,9 +310,11 @@ the status of individual requirements.");
   installedVersionForPlatform(platform) {
     const command = files.convertToOSPath(files.pathJoin(
       this.projectRoot, 'platforms', platform, 'cordova', 'version'));
-    
+
     // Make sure the command exists before trying to execute it
     if (files.exists(command)) {
+      // for some reason windows isn't reading the version file, need to
+      // investigate futher
       if (platform === 'windows') {
         return '4.0.0'
       }

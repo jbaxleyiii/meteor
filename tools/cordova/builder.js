@@ -29,10 +29,10 @@ const iconsAndroidSizes = {
 };
 
 const iconsWindowsSizes = {
-  'windows_ldpi': '36x36',
-  'windows_mdpi': '42x42',
-  'windows_hdpi': '72x72',
-  'windows_xhdpi': '96x96'
+  'windows_ldpi': '30x30',
+  'windows_mdpi': '150x150',
+  'windows_hdpi': '310x310',
+  'windows_xhdpi': '360x360'
 };
 
 const launchIosSizes = {
@@ -59,15 +59,11 @@ const launchAndroidSizes = {
   'android_xhdpi_landscape': '960x720'
 };
 
+
 const launchWindowsSizes = {
-  'windows_ldpi_portrait': '320x426',
-  'windows_ldpi_landscape': '426x320',
-  'windows_mdpi_portrait': '320x470',
-  'windows_mdpi_landscape': '470x320',
-  'windows_hdpi_portrait': '480x640',
-  'windows_hdpi_landscape': '640x480',
-  'windows_xhdpi_portrait': '720x960',
-  'windows_xhdpi_landscape': '960x720'
+  'windows_hdpi_landscape': '620x300',
+  'windows_xhdpi_portrait': '1152x1920',
+  'windows_xhdpi_landscape': '1920x1152'
 };
 
 export class CordovaBuilder {
@@ -100,7 +96,8 @@ export class CordovaBuilder {
       global: {
         'webviewbounce': false,
         'DisallowOverscroll': true,
-        'deployment-target': '7.0'
+        'deployment-target': '7.0',
+        'windows-target-version': 'UAP'
       },
       platform: {
           ios: {},
@@ -108,6 +105,8 @@ export class CordovaBuilder {
           windows: {}
       }
     };
+        // config.element('windows-target-version').text("UAP");
+
 
     const packageMap = this.projectContext.packageMap;
 
@@ -248,6 +247,8 @@ export class CordovaBuilder {
         value: value.toString()
       });
     });
+
+    config.elemetn
 
     // Load from index.html by default
     config.element('content', { src: 'index.html' });

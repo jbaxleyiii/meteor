@@ -42,11 +42,6 @@ function log(...args) {
 
 export class CordovaProject {
   constructor(projectContext, options = {}) {
-    if (process.platform === 'win32') {
-      Console.warn(`Building mobile apps on a Windows system is not \
-yet supported.`);
-      throw new main.ExitWithCode(1);
-    }
 
     this.projectContext = projectContext;
 
@@ -72,7 +67,7 @@ yet supported.`);
       const minPlatformVersions = {
         'android': '4.1.0',
         'ios': '3.9.0',
-        'windows': '10.0'
+        'windows': '4.0.0'
       }
 
       const outdated = _.some(minPlatformVersions, (minVersion, platform) => {
@@ -231,6 +226,12 @@ on an OS X system.");
       return false;
     }
 
+    if (platform === 'windows' && process.platform != 'win32') {
+      Console.warn("Currently, it is only possible to build windows apps \
+on a Windows system.");
+      return false;
+    }
+
     const installedPlatforms = this.listInstalledPlatforms();
 
     const inProject = _.contains(installedPlatforms, platform);
@@ -309,8 +310,12 @@ the status of individual requirements.");
   installedVersionForPlatform(platform) {
     const command = files.convertToOSPath(files.pathJoin(
       this.projectRoot, 'platforms', platform, 'cordova', 'version'));
+    
     // Make sure the command exists before trying to execute it
     if (files.exists(command)) {
+      if (platform === 'windows') {
+        return '4.0.0'
+      }
       return this.runCommands(
         `getting installed version for platform ${platform} in Cordova project`,
         execFileSync(command, {

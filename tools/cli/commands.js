@@ -861,11 +861,7 @@ var buildCommand = function (options) {
   if (!options._serverOnly) {
     cordovaPlatforms = projectContext.platformList.getCordovaPlatforms();
 
-    if (process.platform === 'win32' && !_.isEmpty(cordovaPlatforms)) {
-      Console.warn(`Can't build for mobile on Windows. Skipping the following \
-platforms: ${cordovaPlatforms.join(", ")}`);
-      cordovaPlatforms = [];
-    } else if (process.platform !== 'darwin' && _.contains(cordovaPlatforms, 'ios')) {
+    if (process.platform !== 'darwin' && _.contains(cordovaPlatforms, 'ios')) {
       cordovaPlatforms = _.without(cordovaPlatforms, 'ios');
       Console.warn("Currently, it is only possible to build iOS apps \
 on an OS X system.");
@@ -983,8 +979,9 @@ ${cordova.displayNameForPlatform(platform)}` }, () => {
             if (!options.debug) {
               buildOptions.push('--release');
             }
+            console.log(`building platform: ${platform}`);
             cordovaProject.buildForPlatform(platform, buildOptions);
-
+            console.log(`built platform: ${platform}`);
             const buildPath = files.pathJoin(
               projectContext.getProjectLocalDirectory('cordova-build'),
               'platforms', platform);
@@ -1016,6 +1013,13 @@ https://github.com/meteor/meteor/wiki/How-to-submit-your-iOS-app-to-App-Store
 
 Instructions for publishing your Android app to Play Store can be found at:
 https://github.com/meteor/meteor/wiki/How-to-submit-your-Android-app-to-Play-Store
+`, "utf8");
+            } else if (platform === 'windows') {
+              files.writeFile(
+                files.pathJoin(platformOutputPath, 'README'),
+`This is an auto-generated Windows project for your Windows application.
+
+Instructions for publishing your Windows app to Windows Store can be found later:
 `, "utf8");
             }
         });

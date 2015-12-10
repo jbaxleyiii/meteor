@@ -71,7 +71,8 @@ yet supported.`);
       // use updatePlatforms instead of removing the whole directory.
       const minPlatformVersions = {
         'android': '4.1.0',
-        'ios': '3.9.0'
+        'ios': '3.9.0',
+        'windows': '10.0'
       }
 
       const outdated = _.some(minPlatformVersions, (minVersion, platform) => {

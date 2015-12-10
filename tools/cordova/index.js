@@ -8,11 +8,12 @@ import { oldToNew as oldToNewPluginIds, newToOld as newToOldPluginIds }
 
 export const CORDOVA_ARCH = "web.cordova";
 
-export const AVAILABLE_PLATFORMS = ['ios', 'android'];
+export const AVAILABLE_PLATFORMS = ['ios', 'android', 'windows'];
 
 const PLATFORM_TO_DISPLAY_NAME_MAP = {
   'ios': 'iOS',
-  'android': 'Android'
+  'android': 'Android',
+  'windows': 'Windows 10'
 };
 
 export function displayNameForPlatform(platform) {

@@ -28,6 +28,13 @@ const iconsAndroidSizes = {
   'android_xhdpi': '96x96'
 };
 
+const iconsWindowsSizes = {
+  'windows_ldpi': '36x36',
+  'windows_mdpi': '42x42',
+  'windows_hdpi': '72x72',
+  'windows_xhdpi': '96x96'
+};
+
 const launchIosSizes = {
   'iphone': '320x480',
   'iphone_2x': '640x960',
@@ -50,6 +57,17 @@ const launchAndroidSizes = {
   'android_hdpi_landscape': '640x480',
   'android_xhdpi_portrait': '720x960',
   'android_xhdpi_landscape': '960x720'
+};
+
+const launchWindowsSizes = {
+  'windows_ldpi_portrait': '320x426',
+  'windows_ldpi_landscape': '426x320',
+  'windows_mdpi_portrait': '320x470',
+  'windows_mdpi_landscape': '470x320',
+  'windows_hdpi_portrait': '480x640',
+  'windows_hdpi_landscape': '640x480',
+  'windows_xhdpi_portrait': '720x960',
+  'windows_xhdpi_landscape': '960x720'
 };
 
 export class CordovaBuilder {
@@ -86,7 +104,8 @@ export class CordovaBuilder {
       },
       platform: {
           ios: {},
-          android: {}
+          android: {},
+          windows: {}
       }
     };
 
@@ -164,8 +183,10 @@ export class CordovaBuilder {
 
     _.each(iconsIosSizes, setIcon);
     _.each(iconsAndroidSizes, setIcon);
+    _.each(iconsWindowsSizes, setIcon);
     _.each(launchIosSizes, setLaunchscreen);
     _.each(launchAndroidSizes, setLaunchscreen);
+    _.each(launchWindowsSizes, setLaunchscreen);
 
     this.pluginsConfiguration = {};
   }
@@ -243,7 +264,8 @@ export class CordovaBuilder {
 
     const platformElement = {
       ios: config.element('platform', {name: 'ios'}),
-      android: config.element('platform', {name: 'android'})
+      android: config.element('platform', {name: 'android'}),
+      windows: config.element('platform', {name: 'windows'})
     }
 
     // Set the additional platform-specific configuration preferences
@@ -265,8 +287,10 @@ export class CordovaBuilder {
 
       this.configureAndCopyImages(iconsIosSizes, platformElement.ios, 'icon');
       this.configureAndCopyImages(iconsAndroidSizes, platformElement.android, 'icon');
+      this.configureAndCopyImages(iconsWindowsSizes, platformElement.windows, 'icon');
       this.configureAndCopyImages(launchIosSizes, platformElement.ios, 'splash');
       this.configureAndCopyImages(launchAndroidSizes, platformElement.android, 'splash');
+      this.configureAndCopyImages(launchWindowsSizes, platformElement.windows, 'splash');
     }
 
     Console.debug('Writing new config.xml');
@@ -474,9 +498,9 @@ function createAppConfiguration(builder) {
      */
     setPreference: function (key, value, platform) {
       if (platform) {
-        if (!_.contains(['ios', 'android'], platform)) {
+        if (!_.contains(['ios', 'android', 'windows'], platform)) {
           throw new Error(`Unknown platform in App.setPreference: ${platform}. \
-Valid platforms are: ios, android.`);
+Valid platforms are: ios, android, 'windows'`);
         }
 
         builder.additionalConfiguration.platform[platform][key] = value;
@@ -517,7 +541,7 @@ Valid platforms are: ios, android.`);
      */
     icons: function (icons) {
       var validDevices =
-        _.keys(iconsIosSizes).concat(_.keys(iconsAndroidSizes));
+        _.keys(iconsIosSizes).concat(_.keys(iconsAndroidSizes), _.keys(iconsWindowsSizes));
       _.each(icons, function (value, key) {
         if (!_.include(validDevices, key)) {
           throw new Error(key + ": unknown key in App.icons configuration.");
@@ -560,7 +584,7 @@ Valid platforms are: ios, android.`);
      */
     launchScreens: function (launchScreens) {
       var validDevices =
-        _.keys(launchIosSizes).concat(_.keys(launchAndroidSizes));
+        _.keys(launchIosSizes).concat(_.keys(launchAndroidSizes), _.keys(launchWindowsSizes));
 
       _.each(launchScreens, function (value, key) {
         if (!_.include(validDevices, key)) {

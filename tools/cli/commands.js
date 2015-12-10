@@ -19,7 +19,7 @@ var release = require('../packaging/release.js');
 import * as cordova from '../cordova';
 import { CordovaProject } from '../cordova/project.js';
 import { CordovaRunner } from '../cordova/runner.js';
-import { iOSRunTarget, AndroidRunTarget } from '../cordova/run-targets.js';
+import { iOSRunTarget, AndroidRunTarget, WindowsRunTarget } from '../cordova/run-targets.js';
 
 // The architecture used by MDG's hosted servers; it's the architecture used by
 // 'meteor deploy'.
@@ -155,6 +155,8 @@ export function parseRunTargets(targets) {
       return new iOSRunTarget(isDevice);
     } else if (platform == 'android') {
       return new AndroidRunTarget(isDevice);
+    } else if (platform == 'windows') {
+      return new WindowsRunTarget(isDevice);
     } else {
       Console.error(`Unknown run target: ${target}`);
       throw new main.ExitWithCode(1);

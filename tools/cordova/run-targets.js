@@ -210,6 +210,69 @@ function logFromAndroidLogcatLine(Log, line) {
   }
 };
 
+
+export class WindowsRunTarget extends CordovaRunTarget {
+  constructor(isDevice) {
+    super();
+    this.platform = 'windows';
+    this.isDevice = isDevice;
+  }
+
+  get displayName() {
+    return this.isDevice ? "Windows Device" : "Windows Simulator";
+  }
+
+  async start(cordovaProject) {
+    await cordovaProject.run(this.platform, this.isDevice);
+
+    this.tailLogs(cordovaProject).done();
+  }
+
+  async checkPlatformRequirementsAndSetEnv(cordovaProject) {
+
+    const check_reqs = require(files.pathJoin(
+      cordovaProject.projectRoot, 'platforms', this.platform,
+      'cordova', 'lib', 'check_reqs'));
+    // We can't use check_reqs.run() because that will print the values of
+    // JAVA_HOME and ANDROID_HOME to stdout.
+    await Promise.all([check_reqs.check_run()]);
+  }
+
+  async tailLogs(cordovaProject) {
+    // cordovaProject.runCommands(`tailing logs for ${this.displayName}`, async () => {
+    //   await this.checkPlatformRequirementsAndSetEnv(cordovaProject);
+    //
+    //   // XXX This only works if we have at most one device or one emulator
+    //   // connected. We should find a way to get the target ID from run and use
+    //   // it instead of -d or -e.
+    //   const target = this.isDevice ? "-d" : "-e";
+    //
+    //   // Clear logs
+    //   await execFileAsync('adb', [target, 'logcat', '-c']);
+    //
+    //   const filterExpressions = ['CordovaLog:D', 'chromium:I',
+    //     'SystemWebViewClient:I', '*:S'];
+    //
+    //   const { Log } =
+    //       isopackets.load('cordova-support')['logging'];
+    //
+    //   const logStream = eachline((line) => {
+    //     const logEntry = logFromAndroidLogcatLine(Log, line);
+    //     if (logEntry) {
+    //       return `${logEntry}\n`;
+    //     }
+    //   });
+    //   logStream.pipe(process.stdout);
+    //
+    //   // Asynchronously start tailing logs to stdout
+    //   execFileAsync('adb', [target, 'logcat',
+    //     ...filterExpressions],
+    //     { destination: logStream });
+    // });
+  }
+}
+
+
 function logFromConsoleOutput(Log, message, filename, lineNumber) {
   if (isDebugOutput(message) && !Console.verbose) {
     return null;

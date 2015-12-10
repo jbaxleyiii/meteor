@@ -62,8 +62,7 @@ const launchAndroidSizes = {
 
 const launchWindowsSizes = {
   'windows_hdpi_landscape': '620x300',
-  'windows_xhdpi_portrait': '1152x1920',
-  'windows_xhdpi_landscape': '1920x1152'
+  'windows_xhdpi_portrait': '1152x1920'
 };
 
 export class CordovaBuilder {

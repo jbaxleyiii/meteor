@@ -12,7 +12,7 @@
     console.log(DEBUG_TAG + msg);
   };
   var uriToPath = function (uri) {
-    return decodeURI(uri).replace(/^file:\/\//g, '');
+    return decodeURI(uri).replace(/(^file:\/\/)|(^ms-appx(|-web):\/\/)/g, '');
   };
   var readFile = function (url, cb) {
     window.resolveLocalFileSystemURL(url, function (fileEntry) {
@@ -40,6 +40,7 @@
     var cordovaRoot =
       uriToPath(window.location.href).replace(/\/index.html$/, '/');
 
+
     var httpd = cordova && cordova.plugins && cordova.plugins.CordovaUpdate;
 
     var retry = function () {
@@ -53,6 +54,7 @@
         loadFromLocation(location);
       }
     };
+
 
     httpd.startServer({
       'www_root' : location,
@@ -79,7 +81,6 @@
     }
     var location = cordova.file.applicationDirectory + 'www/application/';
     location = uriToPath(location);
-
     loadFromLocation(location);
   };
 
@@ -103,6 +104,7 @@
 
   document.addEventListener("deviceready", function () {
     var startLoading = function () {
+      
       if (!cordova.file) {
         // If the plugin didn't actually load, try again later.
         // See a larger comment with details in

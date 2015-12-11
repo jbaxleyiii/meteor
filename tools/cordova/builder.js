@@ -96,7 +96,9 @@ export class CordovaBuilder {
         'webviewbounce': false,
         'DisallowOverscroll': true,
         'deployment-target': '7.0',
-        'windows-target-version': 'UAP'
+        'windows-target-version': '10.0',
+        'windows-phone-target-version': '10.0'
+
       },
       platform: {
           ios: {},
@@ -247,20 +249,19 @@ export class CordovaBuilder {
       });
     });
 
-    config.elemetn
-
     // Load from index.html by default
     config.element('content', { src: 'index.html' });
 
     // Copy all the access rules
     _.each(this.accessRules, (rule, pattern) => {
-      var opts = { origin: pattern };
+      var opts = { href: pattern };
       if (rule === 'external') {
         opts['launch-external'] = true;
       }
 
-      config.element('access', opts);
+      config.element('allow-intent', opts);
     });
+
 
     const platformElement = {
       ios: config.element('platform', {name: 'ios'}),

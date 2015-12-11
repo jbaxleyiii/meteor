@@ -67,7 +67,7 @@ export class CordovaProject {
       const minPlatformVersions = {
         'android': '4.1.0',
         'ios': '3.9.0',
-        'windows': '4.0.0'
+        'windows': '4.2.0'
       }
 
       const outdated = _.some(minPlatformVersions, (minVersion, platform) => {
@@ -197,22 +197,35 @@ ${displayNameForPlatform(platform)}`, async () => {
   // Running
 
   async run(platform, isDevice, options = [], extraPaths) {
-
+    
     options.push(isDevice ? '--device' : '--emulator');
-
+        
     const env = this.defaultEnvWithPathsAdded(...extraPaths);
-    const run = process.platform === 'win32' ? 'run.bat' : 'run'
     const command = files.convertToOSPath(files.pathJoin(
-      this.projectRoot, 'platforms', platform, 'cordova', run));
+      this.projectRoot, 'platforms', platform, 'cordova', 'run'));
 
-    this.runCommands(`running Cordova app for platform \
-${displayNameForPlatform(platform)} with options ${options}`,
-    execFileAsync(command, options, {
-      env: env,
-      cwd: this.projectRoot,
-      stdio: Console.verbose ? 'inherit' : 'pipe',
-      waitForClose: false })
-    ), null, null;
+
+    if (process.platform === 'win32') {
+      this.runCommands(`running Cordova app for platform \
+  ${displayNameForPlatform(platform)} with options ${options}`,
+      superspawn.spawn(command, {
+        env: env,
+        cwd: this.projectRoot,
+        stdio: Console.verbose ? 'inherit' : 'pipe',
+        waitForClose: false })
+      ), null, null;
+    } else {
+      this.runCommands(`running Cordova app for platform \
+  ${displayNameForPlatform(platform)} with options ${options}`,
+      execFileAsync(command, options, {
+        env: env,
+        cwd: this.projectRoot,
+        stdio: Console.verbose ? 'inherit' : 'pipe',
+        waitForClose: false })
+      ), null, null;
+    }
+
+    
   }
 
   // Platforms
@@ -309,12 +322,17 @@ the status of individual requirements.");
   }
 
   installedVersionForPlatform(platform) {
-    const version = process.platform === 'win32' ? 'version.bat' : 'version'
     const command = files.convertToOSPath(files.pathJoin(
-      this.projectRoot, 'platforms', platform, 'cordova', version));
+      this.projectRoot, 'platforms', platform, 'cordova', 'version'));
 
     // Make sure the command exists before trying to execute it
     if (files.exists(command)) {
+      if (process.platform === 'win32') {
+        return Promise.await(superspawn.spawn(command, {
+          env: this.defaultEnvWithPathsAdded(),
+          cwd: this.projectRoot}))
+      }
+      
       return this.runCommands(
         `getting installed version for platform ${platform} in Cordova project`,
         execFileSync(command, {

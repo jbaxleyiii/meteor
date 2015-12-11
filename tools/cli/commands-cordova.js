@@ -43,6 +43,8 @@ main.registerCommand({
     for (platform of platformsToAdd) {
       if (_.contains(installedPlatforms, platform)) {
         buildmessage.error(`${platform}: platform is already added`);
+      } else if (process.platform != 'win32' && platform === 'windows') {
+        buildmessage.error(`${platform} platform can only be added on a windows machine`);
       } else if (!_.contains(cordova.AVAILABLE_PLATFORMS, platform)) {
         buildmessage.error(`${platform}: no such platform`);
       }

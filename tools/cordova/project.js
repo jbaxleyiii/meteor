@@ -197,12 +197,13 @@ ${displayNameForPlatform(platform)}`, async () => {
   // Running
 
   async run(platform, isDevice, options = [], extraPaths) {
+
     options.push(isDevice ? '--device' : '--emulator');
 
     const env = this.defaultEnvWithPathsAdded(...extraPaths);
-
+    const run = process.platform === 'win32' ? 'run.bat' : 'run'
     const command = files.convertToOSPath(files.pathJoin(
-      this.projectRoot, 'platforms', platform, 'cordova', 'run'));
+      this.projectRoot, 'platforms', platform, 'cordova', run));
 
     this.runCommands(`running Cordova app for platform \
 ${displayNameForPlatform(platform)} with options ${options}`,
@@ -308,16 +309,12 @@ the status of individual requirements.");
   }
 
   installedVersionForPlatform(platform) {
+    const version = process.platform === 'win32' ? 'version.bat' : 'version'
     const command = files.convertToOSPath(files.pathJoin(
-      this.projectRoot, 'platforms', platform, 'cordova', 'version'));
+      this.projectRoot, 'platforms', platform, 'cordova', version));
 
     // Make sure the command exists before trying to execute it
     if (files.exists(command)) {
-      // for some reason windows isn't reading the version file, need to
-      // investigate futher
-      if (platform === 'windows') {
-        return '4.0.0'
-      }
       return this.runCommands(
         `getting installed version for platform ${platform} in Cordova project`,
         execFileSync(command, {
